@@ -146,7 +146,7 @@ Trace every syscall a process makes. You can target a **running process** by PID
 
 ```bash
 # Option A: trace an already running process (by PID)
-sudo ./bin/syscage learn -d 15 -o nginx.trace --pid 1234
+sudo ./bin/syscage learn -d 15 -o nginx.trace 1234
 
 # Option B: trace by process name (auto-resolves to PID)
 sudo ./bin/syscage learn -d 15 -o nginx.trace $(pidof nginx)
@@ -158,7 +158,7 @@ sudo ./bin/syscage learn -d 5 -o ls.trace -- /bin/ls -la /tmp
 > **What each part means:**
 > - `-d 15` — trace for 15 seconds
 > - `-o ls.trace` — save results to file `ls.trace`
-> - `--pid 1234` — attach to process with PID 1234
+> - `1234` — PID of the running process to trace
 > - `$(pidof nginx)` — resolves "nginx" to its PID (like typing `1234` manually)
 > - `-- /bin/ls -la /tmp` — the `--` separates SYSCAGE options from the command to launch
 
