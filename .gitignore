@@ -1,0 +1,32 @@
+# SYSCAGE .gitignore
+
+# Build outputs
+bin/
+build/
+*.o
+*.d
+*.so
+*.a
+
+# SYSCAGE artifacts
+*.trace
+*.syscage
+*.scf
+profiles/
+
+# Reports
+reports/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test outputs
+tests/*.log
