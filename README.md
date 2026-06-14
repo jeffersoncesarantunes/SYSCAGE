@@ -138,27 +138,73 @@ cd SYSCAGE
 
 # 2. Compile
 make clean && make
-
-# 3. Profile a process
-sudo ./bin/syscage learn -d 15 -o trace $(pidof <target>)
-
-# 4. Generate a profile
-sudo ./bin/syscage gen trace
-
-# 5. Enforce the profile
-sudo ./bin/syscage enforce -p trace.syscage -e -- /usr/bin/<target>
-
-# Or watch with violation monitoring
-sudo ./bin/syscage watch -p trace.syscage -- /usr/bin/<target>
 ```
 
-### Quick demo: profile and restrict `ls`
+### 3. Profile a process (learn phase)
+
+Trace every syscall a process makes. You can target a **running process** by PID or name, or **execute a command** under trace:
+
+```bash
+# Option A: trace an already running process (by PID)
+sudo ./bin/syscage learn -d 15 -o nginx.trace --pid 1234
+
+# Option B: trace by process name (auto-resolves to PID)
+sudo ./bin/syscage learn -d 15 -o nginx.trace $(pidof nginx)
+
+# Option C: launch and trace a command (recommended for beginners)
+sudo ./bin/syscage learn -d 5 -o ls.trace -- /bin/ls -la /tmp
+```
+
+> **What each part means:**
+> - `-d 15` — trace for 15 seconds
+> - `-o ls.trace` — save results to file `ls.trace`
+> - `--pid 1234` — attach to process with PID 1234
+> - `$(pidof nginx)` — resolves "nginx" to its PID (like typing `1234` manually)
+> - `-- /bin/ls -la /tmp` — the `--` separates SYSCAGE options from the command to launch
+
+### 4. Generate a seccomp profile (gen phase)
+
+Convert the raw trace into a human-readable policy file:
+
+```bash
+sudo ./bin/syscage gen ls.trace
+```
+
+This creates `ls.trace.syscage` — a text file listing every allowed syscall.
+
+You can also generate a C header for embedding into other programs:
+
+```bash
+sudo ./bin/syscage gen --header ls.trace
+```
+
+### 5. Enforce the profile (enforce / watch phase)
+
+Apply the policy to a process. Use `enforce` for production or `watch` to see violations:
+
+```bash
+# Spawn a new command under the profile
+sudo ./bin/syscage enforce -p ls.trace.syscage -e -- /bin/ls /tmp
+
+# Or watch with violation monitoring
+sudo ./bin/syscage watch -p ls.trace.syscage -- /bin/ls /tmp
+```
+
+> **What each part means:**
+> - `-p ls.trace.syscage` — which profile to apply
+> - `-e` — spawn a new process (instead of attaching to a running one)
+> - `-- /bin/ls /tmp` — command to confine
+> - `watch` — same as enforce, but logs if the process tries a blocked syscall
+
+### Complete working example: `ls`
 
 ```bash
 sudo ./bin/syscage learn -d 3 -o ls.trace -- /bin/ls -la /tmp
 sudo ./bin/syscage gen ls.trace
 sudo ./bin/syscage enforce -p ls.trace.syscage -e -- /bin/ls /tmp
 ```
+
+Try it — the third command runs `ls` confined to only the syscalls it used during profiling. If it works the same as without SYSCAGE, the profile is complete.
 
 ---
 
