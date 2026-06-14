@@ -117,16 +117,13 @@ static int cmd_learn(int argc, char **argv, const char *prog)
 
     trace_result_t *result = NULL;
 
-    /* Check if argument is a PID (numeric) */
     char *endptr;
     long pid = strtol(argv[optind], &endptr, 10);
 
     if (*endptr == '\0' && pid > 0) {
-        /* Numeric: attach to running PID */
         log_info("Attaching to PID %ld...\n", pid);
         result = tracer_attach((pid_t)pid, &opts);
     } else {
-        /* Non-numeric: execute as command */
         log_info("Executing '%s' under trace...\n", argv[optind]);
         result = tracer_exec(argv[optind], &argv[optind], &opts);
     }
@@ -223,7 +220,6 @@ static int cmd_gen(int argc, char **argv, const char *prog)
         return SYSCAGE_ERR;
     }
 
-    /* Determine output path */
     char out_path[1024];
     if (opts.output) {
         snprintf(out_path, sizeof(out_path), "%s", opts.output);
@@ -434,7 +430,7 @@ int main(int argc, char **argv)
     }
 
     if (strcmp(argv[1], "--version") == 0) {
-        fprintf(stdout, "%s version %s\n", SYSCAGE_NAME, SYSCAGE_VERSION);
+        fprintf(stdout, "%s\n", SYSCAGE_NAME);
         return SYSCAGE_OK;
     }
 

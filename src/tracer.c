@@ -16,10 +16,6 @@
 #include "syscage.h"
 #include "tracer.h"
 
-/*
- * Syscall name table for x86_64.
- * Covers the most common syscalls; unknown ones are formatted as "syscall_N".
- */
 static const char *g_syscall_names[SYSCAGE_MAX_SYSCALL] = {
     [0]   = "read",
     [1]   = "write",
@@ -375,9 +371,6 @@ const char *tracer_syscall_name(long number)
     return buf;
 }
 
-/*
- * Ptrace-based tracer implementation.
- */
 typedef struct {
     long number;
     unsigned long count;
@@ -405,7 +398,6 @@ static trace_result_t *context_to_result(struct trace_context *ctx,
     trace_result_t *tr = calloc(1, sizeof(trace_result_t));
     if (!tr) return NULL;
 
-    /* Count non-zero entries */
     size_t n = 0;
     for (int i = 0; i < SYSCAGE_MAX_SYSCALL; i++) {
         if (ctx->entries[i].count > 0) n++;
@@ -473,7 +465,6 @@ static int ptrace_trace_pid(struct trace_context *ctx, int duration_sec)
             break;
         }
 
-        /* Syscall entry */
         if (ptrace(PTRACE_SYSCALL, traced_pid, NULL, NULL) < 0) {
             break;
         }
@@ -493,7 +484,6 @@ static int ptrace_trace_pid(struct trace_context *ctx, int duration_sec)
         long nr = (long)regs.orig_rax;
         trace_entry_record(ctx, nr);
 
-        /* Syscall exit */
         if (ptrace(PTRACE_SYSCALL, traced_pid, NULL, NULL) < 0) break;
 
         if (waitpid(traced_pid, &status, 0) < 0) break;
@@ -520,7 +510,6 @@ static int ptrace_exec_and_trace(struct trace_context *ctx,
 {
     pid_t child = fork();
     if (child == 0) {
-        /* Child: allow tracing */
         ptrace(PTRACE_TRACEME, 0, NULL, NULL);
         raise(SIGSTOP);
         execvp(cmd, argv);
@@ -660,7 +649,6 @@ trace_result_t *tracer_load(const char *path)
         return NULL;
     }
 
-    /* Count lines to estimate capacity */
     size_t capacity = 256;
     tr->calls = calloc(capacity, sizeof(syscall_obs_t));
     if (!tr->calls) {
@@ -677,13 +665,11 @@ trace_result_t *tracer_load(const char *path)
         next = strchr(line, '\n');
         if (next) *next++ = '\0';
 
-        /* Skip blank lines */
         if (line[0] == '\0') {
             line = next;
             continue;
         }
 
-        /* Parse metadata headers (lines starting with # but with data) */
         if (line[0] == '#') {
             if (strncmp(line, "# PID:", 6) == 0) {
                 sscanf(line, "# PID: %d", &tr->target_pid);
@@ -718,7 +704,6 @@ trace_result_t *tracer_load(const char *path)
 
     tr->count = idx;
 
-    /* Recalculate total from actual entries if not in header */
     if (tr->total == 0) {
         for (size_t i = 0; i < tr->count; i++) {
             tr->total += tr->calls[i].count;

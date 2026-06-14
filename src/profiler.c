@@ -16,33 +16,29 @@ static int compare_syscall_count(const void *a, const void *b)
     return 0;
 }
 
-/*
- * Critical syscalls that should always be allowed for basic process
- * operation, regardless of what was observed during tracing.
- */
 static const long g_critical_syscalls[] = {
-    0,   /* read     */
-    1,   /* write    */
-    3,   /* close    */
-    60,  /* exit     */
-    231, /* exit_group */
-    186, /* gettid   */
-    39,  /* getpid   */
-    110, /* getppid  */
-    96,  /* gettimeofday */
-    228, /* clock_gettime */
-    35,  /* nanosleep */
-    13,  /* rt_sigaction */
-    14,  /* rt_sigprocmask */
-    15,  /* rt_sigreturn */
-    157, /* prctl    */
-    317, /* seccomp  */
+    0,
+    1,
+    3,
+    60,
+    231,
+    186,
+    39,
+    110,
+    96,
+    228,
+    35,
+    13,
+    14,
+    15,
+    157,
+    317,
 };
 static const size_t g_critical_count =
     sizeof(g_critical_syscalls) / sizeof(g_critical_syscalls[0]);
 
 static int rule_has_syscall(const profile_rule_t *rules, size_t count,
-                             long nr)
+                              long nr)
 {
     for (size_t i = 0; i < count; i++) {
         if (rules[i].syscall_number == nr) return 1;
@@ -56,14 +52,12 @@ profile_t *profiler_generate(const trace_result_t *tr,
     profile_opts_t default_opts = PROFILE_OPTS_DEFAULT;
     if (!opts) opts = &default_opts;
 
-    /* Estimate rule count: observed + critical */
     size_t max_rules = tr->count + g_critical_count + 64;
     profile_rule_t *rules = calloc(max_rules, sizeof(profile_rule_t));
     if (!rules) return NULL;
 
     size_t idx = 0;
 
-    /* Add observed syscalls meeting frequency threshold */
     for (size_t i = 0; i < tr->count; i++) {
         if (tr->calls[i].count >= (unsigned long)opts->min_frequency) {
             rules[idx].syscall_number = tr->calls[i].number;
@@ -73,7 +67,6 @@ profile_t *profiler_generate(const trace_result_t *tr,
         }
     }
 
-    /* Add critical syscalls if not already present */
     if (opts->include_critical) {
         for (size_t i = 0; i < g_critical_count; i++) {
             if (!rule_has_syscall(rules, idx, g_critical_syscalls[i])) {
@@ -86,7 +79,6 @@ profile_t *profiler_generate(const trace_result_t *tr,
         }
     }
 
-    /* Sort by syscall number for readability */
     qsort(rules, idx, sizeof(profile_rule_t), compare_syscall_count);
 
     profile_t *pf = calloc(1, sizeof(profile_t));
@@ -168,7 +160,6 @@ int profiler_save_header(const profile_t *pf, const char *path)
     fprintf(f, "#include <linux/filter.h>\n");
     fprintf(f, "#include <linux/seccomp.h>\n\n");
 
-    /* Generate BPF filter program */
     fprintf(f, "static struct sock_filter syscage_filter[] = {\n");
 
     for (size_t i = 0; i < pf->rule_count; i++) {
@@ -180,7 +171,6 @@ int profiler_save_header(const profile_t *pf, const char *path)
         }
     }
 
-    /* Default action */
     fprintf(f, "    BPF_STMT(BPF_RET|BPF_K, "
             "SECCOMP_RET_KILL),\n");
 
@@ -226,13 +216,11 @@ profile_t *profiler_load(const char *path)
         next = strchr(line, '\n');
         if (next) *next++ = '\0';
 
-        /* Skip blank lines */
         if (line[0] == '\0' || line[0] == '\n') {
             line = next;
             continue;
         }
 
-        /* Parse metadata */
         if (strncmp(line, "# Source PID:", 12) == 0) {
             sscanf(line, "# Source PID: %d", &pf->source_pid);
             line = next;
@@ -258,7 +246,6 @@ profile_t *profiler_load(const char *path)
             continue;
         }
 
-        /* Parse rule: <number> <action> */
         long nr;
         char action;
         if (sscanf(line, "%ld %c", &nr, &action) >= 1) {
@@ -312,7 +299,6 @@ void profiler_print(const profile_t *pf)
            pf->default_action == ACTION_ALLOW ? "ALLOW" : "KILL");
     printf("\n");
 
-    /* Show top 20 most interesting syscalls */
     size_t show = pf->rule_count < 20 ? pf->rule_count : 20;
     printf("  %-5s  %s\n", "NR", "SYSCALL");
     printf("  %s\n", "  ─────────────────");

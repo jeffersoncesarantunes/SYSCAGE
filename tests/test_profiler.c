@@ -10,14 +10,12 @@
 
 static int test_syscall_name(void)
 {
-    /* Known names */
     assert(strcmp(tracer_syscall_name(0), "read") == 0);
     assert(strcmp(tracer_syscall_name(1), "write") == 0);
     assert(strcmp(tracer_syscall_name(59), "execve") == 0);
     assert(strcmp(tracer_syscall_name(60), "exit") == 0);
     assert(strcmp(tracer_syscall_name(317), "seccomp") == 0);
 
-    /* Unknown syscalls */
     assert(strcmp(tracer_syscall_name(999), "syscall_999") == 0);
     assert(strcmp(tracer_syscall_name(-1), "syscall_-1") == 0);
 
@@ -54,7 +52,6 @@ static int test_trace_save_load(void)
     assert(loaded->total == 85);
     assert(loaded->target_pid == 1234);
 
-    /* Verify syscall data */
     int found[3] = {0, 0, 0};
     for (size_t i = 0; i < loaded->count; i++) {
         if (loaded->calls[i].number == 0) {
@@ -88,9 +85,9 @@ static int test_profile_generation(void)
     tr->calls = calloc(2, sizeof(syscall_obs_t));
     assert(tr->calls != NULL);
 
-    tr->calls[0].number = 0;   /* read */
+    tr->calls[0].number = 0;
     tr->calls[0].count = 100;
-    tr->calls[1].number = 2;   /* open */
+    tr->calls[1].number = 2;
     tr->calls[1].count = 5;
 
     tr->count = 2;
@@ -102,7 +99,6 @@ static int test_profile_generation(void)
     assert(pf != NULL);
     assert(pf->rule_count >= 2);
 
-    /* Should include observed + critical syscalls */
     int has_read = 0, has_open = 0, has_exit = 0;
     for (size_t i = 0; i < pf->rule_count; i++) {
         if (pf->rules[i].syscall_number == 0) has_read = 1;
@@ -113,7 +109,6 @@ static int test_profile_generation(void)
     assert(has_open);
     assert(has_exit);
 
-    /* Save and reload */
     const char *test_path = "/tmp/syscage_test_profile.syscage";
     assert(profiler_save(pf, test_path) == 0);
 
@@ -149,7 +144,6 @@ static int test_header_generation(void)
     const char *test_path = "/tmp/syscage_test_profile.h";
     assert(profiler_save_header(pf, test_path) == 0);
 
-    /* Verify header content */
     char *content = NULL;
     syscage_read_file(test_path, &content);
     assert(content != NULL);

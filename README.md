@@ -251,10 +251,4 @@ SYSCAGE/
 
 *This project is licensed under the MIT License.*
 
-## About
 
-🐧 Behavioral syscall profiler and seccomp policy generator for Linux process confinement.
-
-### Topics
-
-[linux](/topics/linux) [seccomp](/topics/seccomp) [security](/topics/security) [linux-kernel](/topics/linux-kernel) [syscall](/topics/syscall) [process-confinement](/topics/process-confinement) [ebpf](/topics/ebpf) [linux-security](/topics/linux-security)

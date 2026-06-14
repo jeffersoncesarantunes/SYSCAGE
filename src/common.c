@@ -25,7 +25,7 @@ static const char *log_label(log_level_t level)
     case LOG_WARN:  return "WRN";
     case LOG_INFO:  return "INF";
     case LOG_DEBUG: return "DBG";
-    default:        return "???" ;
+    default:        return "???";
     }
 }
 
@@ -106,14 +106,12 @@ int syscage_write_file(const char *path, const char *data, size_t len)
 
 pid_t syscage_resolve_target(const char *spec)
 {
-    /* If numeric, treat as PID */
     char *endptr;
     long val = strtol(spec, &endptr, 10);
     if (*endptr == '\0' && val > 0) {
         return (pid_t)val;
     }
 
-    /* Otherwise try to resolve as process name via /proc */
     DIR *proc = opendir("/proc");
     if (!proc) return -1;
 
@@ -129,7 +127,6 @@ pid_t syscage_resolve_target(const char *spec)
         size_t len = syscage_read_file(cmdline_path, &comm);
         if (!comm) continue;
 
-        /* Remove trailing newline */
         if (len > 0 && comm[len - 1] == '\n') comm[len - 1] = '\0';
 
         if (strcmp(comm, spec) == 0) {
