@@ -142,25 +142,25 @@ make clean && make
 
 ### 3. Profile a process (learn phase)
 
-Trace every syscall a process makes. You can target a **running process** by PID or name, or **execute a command** under trace:
+Trace every syscall a process makes. The **recommended way** (works on any Linux) is to **launch a command** under trace. You can also attach to a running process if your kernel allows it.
 
 ```bash
-# Option A: trace an already running process (by PID)
-sudo ./bin/syscage learn -d 15 -o nginx.trace 1234
-
-# Option B: trace by process name (auto-resolves to PID)
-sudo ./bin/syscage learn -d 15 -o nginx.trace $(pidof nginx)
-
-# Option C: launch and trace a command (recommended for beginners)
+# Recommended: launch and trace a command (works everywhere)
 sudo ./bin/syscage learn -d 5 -o ls.trace -- /bin/ls -la /tmp
+
+# Optional: trace an already running process (by PID or name)
+sudo ./bin/syscage learn -d 15 -o nginx.trace 1234
+sudo ./bin/syscage learn -d 15 -o nginx.trace $(pidof nginx)
 ```
 
 > **What each part means:**
-> - `-d 15` — trace for 15 seconds
+> - `-d 5` — trace for 5 seconds
 > - `-o ls.trace` — save results to file `ls.trace`
-> - `1234` — PID of the running process to trace
-> - `$(pidof nginx)` — resolves "nginx" to its PID (like typing `1234` manually)
 > - `-- /bin/ls -la /tmp` — the `--` separates SYSCAGE options from the command to launch
+> - `1234` — PID of a running process to trace
+> - `$(pidof nginx)` — resolves "nginx" to its PID automatically
+>
+> **Note:** Attaching to a running process requires `ptrace_scope = 0`. Most Linux distros (including Arch) default to `1`, which only allows tracing child processes. This is why Option A/B may fail with "Operation not permitted" — launch the command under trace instead (Option C, which always works).
 
 ### 4. Generate a seccomp profile (gen phase)
 
@@ -180,31 +180,31 @@ sudo ./bin/syscage gen --header ls.trace
 
 ### 5. Enforce the profile (enforce / watch phase)
 
-Apply the policy to a process. Use `enforce` for production or `watch` to see violations:
+Apply the policy to a process. Use `enforce` to spawn a command silently, or `watch` to see its output and exit status:
 
 ```bash
-# Spawn a new command under the profile
-sudo ./bin/syscage enforce -p ls.trace.syscage -e -- /bin/ls /tmp
-
-# Or watch with violation monitoring
+# watch shows the command's output and waits for it to finish (recommended)
 sudo ./bin/syscage watch -p ls.trace.syscage -- /bin/ls /tmp
+
+# enforce spawns and returns immediately (for scripts/production)
+sudo ./bin/syscage enforce -p ls.trace.syscage -e -- /bin/ls /tmp
 ```
 
 > **What each part means:**
 > - `-p ls.trace.syscage` — which profile to apply
 > - `-e` — spawn a new process (instead of attaching to a running one)
-> - `-- /bin/ls /tmp` — command to confine
-> - `watch` — same as enforce, but logs if the process tries a blocked syscall
+> - `-- /bin/ls /tmp` — command to confine under the profile
+> - `watch` — same as enforce, but **shows output** and logs if a blocked syscall is attempted
 
 ### Complete working example: `ls`
 
 ```bash
-sudo ./bin/syscage learn -d 3 -o ls.trace -- /bin/ls -la /tmp
+sudo ./bin/syscage learn -d 5 -o ls.trace -- /bin/ls -la /tmp
 sudo ./bin/syscage gen ls.trace
-sudo ./bin/syscage enforce -p ls.trace.syscage -e -- /bin/ls /tmp
+sudo ./bin/syscage watch -p ls.trace.syscage -- /bin/ls /tmp
 ```
 
-Try it — the third command runs `ls` confined to only the syscalls it used during profiling. If it works the same as without SYSCAGE, the profile is complete.
+That's it. Three commands and you've confined `ls` to only the syscalls it used during profiling. If it runs the same as without SYSCAGE, the profile is complete.
 
 ---
 
