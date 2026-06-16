@@ -20,11 +20,9 @@ SYSCAGE is a three-phase tool that observes, generates, and enforces syscall-lev
 
 **Core Pipeline:**
 
-| Phase | Command | Input | Output |
-|---|---|---|---|
-| **1. Learn** | `syscage learn` | Running PID or command | `.trace` file |
-| **2. Generate** | `syscage gen` | `.trace` file | `.syscage` profile |
-| **3. Enforce** | `syscage enforce` / `syscage watch` | `.syscage` profile | seccomp-bpf filter applied via `prctl(2)` |
+1. **Learn** — `syscage learn` — Running PID or command → `.trace` file
+2. **Generate** — `syscage gen` — `.trace` file → `.syscage` profile
+3. **Enforce** — `syscage enforce` / `syscage watch` — `.syscage` profile → seccomp-bpf filter via `prctl(2)`
 
 ---
 
