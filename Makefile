@@ -1,6 +1,6 @@
 CC      = gcc
-CFLAGS  = -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -D_GNU_SOURCE
-LDFLAGS =
+CFLAGS  = -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fPIE
+LDFLAGS = -pie -Wl,-z,relro,-z,now
 LIBS    =
 
 SRCDIR  = src

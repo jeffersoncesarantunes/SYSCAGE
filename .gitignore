@@ -27,6 +27,21 @@ reports/
 # OS
 .DS_Store
 Thumbs.db
+Desktop.ini
 
 # Test outputs
 tests/*.log
+
+# Secrets / credentials
+.env
+.env.*
+*.pem
+*.key
+*.cert
+credentials*
+*.secret
+.netrc
+
+# Core dumps
+core
+*.core

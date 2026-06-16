@@ -672,9 +672,11 @@ trace_result_t *tracer_load(const char *path)
 
         if (line[0] == '#') {
             if (strncmp(line, "# PID:", 6) == 0) {
-                sscanf(line, "# PID: %d", &tr->target_pid);
+                if (sscanf(line, "# PID: %d", &tr->target_pid) != 1)
+                    log_warn("Malformed PID line in trace\n");
             } else if (strncmp(line, "# Duration:", 10) == 0) {
-                sscanf(line, "# Duration: %lf", &tr->duration_sec);
+                if (sscanf(line, "# Duration: %lf", &tr->duration_sec) != 1)
+                    log_warn("Malformed Duration line in trace\n");
             } else if (strncmp(line, "# Total calls:", 13) == 0) {
                 unsigned long val;
                 if (sscanf(line, "# Total calls: %lu", &val) == 1)
@@ -687,6 +689,11 @@ trace_result_t *tracer_load(const char *path)
         long nr;
         unsigned long cnt;
         if (sscanf(line, "%ld %lu", &nr, &cnt) == 2) {
+            if (nr < 0 || nr >= SYSCAGE_MAX_SYSCALL) {
+                log_warn("Skipping out-of-range syscall %ld\n", nr);
+                line = next;
+                continue;
+            }
             if (idx >= capacity) {
                 capacity *= 2;
                 syscall_obs_t *newc = realloc(tr->calls,

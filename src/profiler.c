@@ -222,22 +222,26 @@ profile_t *profiler_load(const char *path)
         }
 
         if (strncmp(line, "# Source PID:", 12) == 0) {
-            sscanf(line, "# Source PID: %d", &pf->source_pid);
+            if (sscanf(line, "# Source PID: %d", &pf->source_pid) != 1)
+                log_warn("Malformed Source PID line\n");
             line = next;
             continue;
         }
         if (strncmp(line, "# Duration:", 10) == 0) {
-            sscanf(line, "# Duration: %lf", &pf->duration_sec);
+            if (sscanf(line, "# Duration: %lf", &pf->duration_sec) != 1)
+                log_warn("Malformed Duration line\n");
             line = next;
             continue;
         }
         if (strncmp(line, "# Observations:", 14) == 0) {
-            sscanf(line, "# Observations: %lu", &pf->total_observations);
+            if (sscanf(line, "# Observations: %lu", &pf->total_observations) != 1)
+                log_warn("Malformed Observations line\n");
             line = next;
             continue;
         }
         if (strncmp(line, "# Rules:", 7) == 0) {
-            sscanf(line, "# Rules: %zu", &pf->rule_count);
+            if (sscanf(line, "# Rules: %zu", &pf->rule_count) != 1)
+                log_warn("Malformed Rules line\n");
             line = next;
             continue;
         }

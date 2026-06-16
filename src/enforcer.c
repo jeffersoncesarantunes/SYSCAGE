@@ -117,39 +117,13 @@ int enforcer_apply_filter(profile_t *pf)
 
 int enforcer_attach(profile_t *pf, pid_t pid)
 {
-    log_warn("Attaching seccomp to running PID %d requires "
-             "ptrace injection.\n", pid);
-    log_warn("Consider using 'syscage watch' or 'syscage enforce -e' "
-             "for new processes.\n");
+    log_warn("Attaching seccomp to running PID %d is not supported "
+             "in this version.\n", pid);
+    log_warn("Use 'syscage watch' or 'syscage enforce -e' "
+             "to apply a profile to a new process.\n");
 
-    int status;
-    if (ptrace(PTRACE_SEIZE, pid, NULL, NULL) < 0) {
-        log_error("ptrace(PTRACE_SEIZE) failed: %s\n", strerror(errno));
-        return -1;
-    }
-
-    if (ptrace(PTRACE_INTERRUPT, pid, NULL, NULL) < 0) {
-        log_error("ptrace(PTRACE_INTERRUPT) failed\n");
-        ptrace(PTRACE_DETACH, pid, NULL, NULL);
-        return -1;
-    }
-
-    waitpid(pid, &status, 0);
-
-    struct sock_fprog *prog = build_seccomp_filter(pf);
-    if (!prog) {
-        ptrace(PTRACE_DETACH, pid, NULL, NULL);
-        return -1;
-    }
-
-    log_info("Generated filter with %u instructions.\n", prog->len);
-    log_info("To apply at process start, use: syscage watch\n");
-
-    free_filter(prog);
-    ptrace(PTRACE_DETACH, pid, NULL, NULL);
-    log_info("Detached from PID %d (no filter applied).\n", pid);
-
-    return 0;
+    (void)pf;
+    return -1;
 }
 
 pid_t enforcer_exec(profile_t *pf, const char *cmd,

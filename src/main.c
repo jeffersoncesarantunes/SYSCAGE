@@ -67,10 +67,13 @@ static int cmd_learn(int argc, char **argv, const char *prog)
 
     while ((opt = getopt_long(argc, argv, "d:o:ceqh", long_opts, NULL)) != -1) {
         switch (opt) {
-        case 'd':
-            opts.duration_sec = atoi(optarg);
-            if (opts.duration_sec <= 0) opts.duration_sec = 10;
+        case 'd': {
+            char *end;
+            long val = strtol(optarg, &end, 10);
+            if (*end != '\0' || val <= 0) val = 10;
+            opts.duration_sec = (int)val;
             break;
+        }
         case 'o':
             opts.output = optarg;
             break;
@@ -170,10 +173,13 @@ static int cmd_gen(int argc, char **argv, const char *prog)
         case 'H':
             opts.generate_header = 1;
             break;
-        case 'f':
-            opts.min_frequency = atoi(optarg);
-            if (opts.min_frequency < 1) opts.min_frequency = 1;
+        case 'f': {
+            char *end;
+            long val = strtol(optarg, &end, 10);
+            if (*end != '\0' || val < 1) val = 1;
+            opts.min_frequency = (int)val;
             break;
+        }
         case 'q':
             g_config.quiet = 1;
             break;
