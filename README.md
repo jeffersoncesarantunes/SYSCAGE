@@ -46,10 +46,10 @@ SYSCAGE is a three-phase tool that observes, generates, and enforces syscall-lev
 ## Example Output
 
 ```text
-        SYSCAGE
-     Kernel Policy Fence
-  Behavioral Syscall Profiling
-  & Seccomp Policy Generation
+┌─ SYSCAGE ──────────────────┐
+│ Kernel Policy Fence        │
+│ Syscall Profiling/Seccomp  │
+└────────────────────────────┘
 
 [INF] 14:30:01  Tracing PID 1234 for 30 seconds...
 [INF] 14:30:31  Traced 14203 syscalls in 30.0s
