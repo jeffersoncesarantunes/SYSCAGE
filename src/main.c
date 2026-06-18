@@ -87,6 +87,7 @@ static int cmd_learn(int argc, char **argv, const char *prog)
             g_config.quiet = 1;
             break;
         case 'h':
+            print_banner();
             fprintf(stdout,
                 "Usage: %s learn [options] <pid|command...>\n"
                 "\n"
@@ -114,6 +115,8 @@ static int cmd_learn(int argc, char **argv, const char *prog)
         log_error("No target specified. Use --help for usage.\n");
         return SYSCAGE_ERR_ARG;
     }
+
+    print_banner();
 
     signal(SIGINT, handle_signal);
     signal(SIGTERM, handle_signal);
@@ -184,6 +187,7 @@ static int cmd_gen(int argc, char **argv, const char *prog)
             g_config.quiet = 1;
             break;
         case 'h':
+            print_banner();
             fprintf(stdout,
                 "Usage: %s gen [options] <trace-file>\n"
                 "\n"
@@ -210,6 +214,8 @@ static int cmd_gen(int argc, char **argv, const char *prog)
         log_error("No trace file specified. Use --help for usage.\n");
         return SYSCAGE_ERR_ARG;
     }
+
+    print_banner();
 
     const char *trace_path = argv[optind];
 
@@ -285,6 +291,7 @@ static int cmd_enforce(int argc, char **argv, const char *prog)
             g_config.quiet = 1;
             break;
         case 'h':
+            print_banner();
             fprintf(stdout,
                 "Usage: %s enforce [options] <pid|command...>\n"
                 "\n"
@@ -315,6 +322,8 @@ static int cmd_enforce(int argc, char **argv, const char *prog)
         log_error("No target specified.\n");
         return SYSCAGE_ERR_ARG;
     }
+
+    print_banner();
 
     profile_t *pf = profiler_load(opts.profile_path);
     if (!pf) {
@@ -375,6 +384,7 @@ static int cmd_watch(int argc, char **argv, const char *prog)
             g_config.quiet = 1;
             break;
         case 'h':
+            print_banner();
             fprintf(stdout,
                 "Usage: %s watch [options] <command...>\n"
                 "\n"
@@ -404,6 +414,8 @@ static int cmd_watch(int argc, char **argv, const char *prog)
         log_error("No command specified.\n");
         return SYSCAGE_ERR_ARG;
     }
+
+    print_banner();
 
     profile_t *pf = profiler_load(opts.profile_path);
     if (!pf) {
@@ -455,16 +467,12 @@ int main(int argc, char **argv)
     const char *cmd = argv[1];
 
     if (strcmp(cmd, "learn") == 0) {
-        print_banner();
         return cmd_learn(argc - 1, argv + 1, prog);
     } else if (strcmp(cmd, "gen") == 0) {
-        print_banner();
         return cmd_gen(argc - 1, argv + 1, prog);
     } else if (strcmp(cmd, "enforce") == 0) {
-        print_banner();
         return cmd_enforce(argc - 1, argv + 1, prog);
     } else if (strcmp(cmd, "watch") == 0) {
-        print_banner();
         return cmd_watch(argc - 1, argv + 1, prog);
     } else {
         log_error("Unknown command: %s\n", cmd);
