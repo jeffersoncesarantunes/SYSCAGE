@@ -499,7 +499,7 @@ static int ptrace_trace_pid(struct trace_context *ctx, int duration_sec)
     double elapsed = (now.tv_sec - start.tv_sec)
                    + (now.tv_nsec - start.tv_nsec) / 1e9;
 
-    log_info("Traced %lu syscalls in %.1fs\n", ctx->total_seen, elapsed);
+    log_info("Traced %lu syscalls in %.3fs\n", ctx->total_seen, elapsed);
     return 0;
 }
 
@@ -574,7 +574,7 @@ static int ptrace_exec_and_trace(struct trace_context *ctx,
     double elapsed = (now.tv_sec - start.tv_sec)
                    + (now.tv_nsec - start.tv_nsec) / 1e9;
 
-    log_info("Traced %lu syscalls in %.1fs\n", ctx->total_seen, elapsed);
+    log_info("Traced %lu syscalls in %.3fs\n", ctx->total_seen, elapsed);
     return 0;
 }
 
