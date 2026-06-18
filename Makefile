@@ -1,6 +1,6 @@
 CC      = gcc
 CFLAGS  = -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fPIE
-LDFLAGS = -pie -Wl,-z,relro,-z,now
+LDFLAGS = -pie -Wl,-z,relro,-z,now -Wl,-z,noexecstack
 LIBS    =
 
 SRCDIR  = src
@@ -24,6 +24,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS) | $(BINDIR)
 	$(CC) $(CFLAGS) -I$(INCDIR) -o $@ $^ $(LDFLAGS) $(LIBS)
+	@strip $@
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c | $(BUILDDIR)
 	$(CC) $(CFLAGS) -I$(INCDIR) -c -o $@ $<
