@@ -224,29 +224,38 @@ SYSCAGE is designed for safe profiling and enforcement:
 ```
 SYSCAGE/
 ├── docs/
-│   ├── ARCHITECTURE.md        System design and module boundaries
-│   ├── OPERATION_MODEL.md     Usage workflow and execution modes
-│   ├── THREAT_MODEL.md        Security scope and attack scenarios
-│   └── BPF_REFERENCE.md       Seccomp-BPF filter internals
+│   ├── ARCHITECTURE.md                    System design and module boundaries
+│   ├── OPERATION_MODEL.md                 Usage workflow and execution modes
+│   ├── THREAT_MODEL.md                    Security scope and attack scenarios
+│   └── BPF_REFERENCE.md                   Seccomp-BPF filter internals
+
 ├── include/
-│   ├── syscage.h              Main header and configuration
-│   ├── tracer.h               Tracer API
-│   ├── profiler.h             Profiler and profile API
-│   └── enforcer.h             Enforcer and seccomp API
+│   ├── syscage.h                          Main header and configuration
+│   ├── tracer.h                           Tracer API
+│   ├── profiler.h                         Profiler and profile API
+│   └── enforcer.h                         Enforcer and seccomp API
+
 ├── src/
-│   ├── main.c                 CLI entry point (subcommand dispatch)
-│   ├── common.c               Utilities (logging, file I/O, PID resolution)
-│   ├── tracer.c               Ptrace/eBPF tracer backend
-│   ├── profiler.c             Profile generation and I/O
-│   └── enforcer.c             Seccomp filter building and enforcement
+│   ├── main.c                             CLI entry point (subcommand dispatch)
+│   ├── common.c                           Utilities (logging, file I/O, PID resolution)
+│   ├── tracer.c                           Ptrace/eBPF tracer backend
+│   ├── profiler.c                         Profile generation and I/O
+│   └── enforcer.c                         Seccomp filter building and enforcement
+
 ├── tests/
-│   └── test_profiler.c        Unit tests for profiler and I/O
+│   └── test_profiler.c                    Unit tests for profiler and I/O
+
 ├── examples/
-│   └── profiles/              Example profiles
+│   └── profiles/                          Example profiles
+
 ├── .clang-format
+
 ├── .gitignore
+
 ├── LICENSE
+
 ├── Makefile
+
 └── README.md
 ```
 
