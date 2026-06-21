@@ -222,45 +222,45 @@ SYSCAGE is designed for safe profiling and enforcement:
 ## Repository Structure
 
 ```text
-├── bin/
-│   └── syscage                            Compiled binary output
++-- bin/
+|   \-- syscage                            Compiled binary output
 
-├── build/                                 Build artifacts
++-- build/                                 Build artifacts
 
-├── docs/
-│   ├── ARCHITECTURE.md                    System design and module boundaries
-│   ├── BPF_REFERENCE.md                   Seccomp-BPF filter internals
-│   ├── OPERATION_MODEL.md                 Usage workflow and execution modes
-│   └── THREAT_MODEL.md                    Security scope and attack scenarios
++-- docs/
+|   +-- ARCHITECTURE.md                    System design and module boundaries
+|   +-- BPF_REFERENCE.md                   Seccomp-BPF filter internals
+|   +-- OPERATION_MODEL.md                 Usage workflow and execution modes
+|   \-- THREAT_MODEL.md                    Security scope and attack scenarios
 
-├── examples/
-│   └── profiles/                          Example seccomp profiles
++-- examples/
+|   \-- profiles/                          Example seccomp profiles
 
-├── include/
-│   ├── enforcer.h                         Enforcer and seccomp API
-│   ├── profiler.h                         Profiler and profile API
-│   ├── syscage.h                          Main header and configuration
-│   └── tracer.h                           Tracer API
++-- include/
+|   +-- enforcer.h                         Enforcer and seccomp API
+|   +-- profiler.h                         Profiler and profile API
+|   +-- syscage.h                          Main header and configuration
+|   \-- tracer.h                           Tracer API
 
-├── src/
-│   ├── common.c                           Utilities (logging, file I/O, PID)
-│   ├── enforcer.c                         Seccomp filter building and enforcement
-│   ├── main.c                             CLI entry point (subcommand dispatch)
-│   ├── profiler.c                         Profile generation and I/O
-│   └── tracer.c                           Ptrace/eBPF tracer backend
++-- src/
+|   +-- common.c                           Utilities (logging, file I/O, PID)
+|   +-- enforcer.c                         Seccomp filter building and enforcement
+|   +-- main.c                             CLI entry point (subcommand dispatch)
+|   +-- profiler.c                         Profile generation and I/O
+|   \-- tracer.c                           Ptrace/eBPF tracer backend
 
-├── tests/
-│   └── test_profiler.c                    Unit tests for profiler and I/O
++-- tests/
+|   \-- test_profiler.c                    Unit tests for profiler and I/O
 
-├── .clang-format
++-- .clang-format
 
-├── .gitignore
++-- .gitignore
 
-├── LICENSE
++-- LICENSE
 
-├── Makefile
++-- Makefile
 
-└── README.md
+\-- README.md
 ```
 
 ---
