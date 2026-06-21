@@ -222,45 +222,45 @@ SYSCAGE is designed for safe profiling and enforcement:
 ## Repository Structure
 
 ```text
-+-- bin/
-|   \-- syscage                            Compiled binary output
+├── bin/
+│   └── syscage
 
-+-- build/                                 Build artifacts
+├── build/
 
-+-- docs/
-|   +-- ARCHITECTURE.md                    System design and module boundaries
-|   +-- BPF_REFERENCE.md                   Seccomp-BPF filter internals
-|   +-- OPERATION_MODEL.md                 Usage workflow and execution modes
-|   \-- THREAT_MODEL.md                    Security scope and attack scenarios
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── BPF_REFERENCE.md
+│   ├── OPERATION_MODEL.md
+│   └── THREAT_MODEL.md
 
-+-- examples/
-|   \-- profiles/                          Example seccomp profiles
+├── examples/
+│   └── profiles/
 
-+-- include/
-|   +-- enforcer.h                         Enforcer and seccomp API
-|   +-- profiler.h                         Profiler and profile API
-|   +-- syscage.h                          Main header and configuration
-|   \-- tracer.h                           Tracer API
+├── include/
+│   ├── enforcer.h
+│   ├── profiler.h
+│   ├── syscage.h
+│   └── tracer.h
 
-+-- src/
-|   +-- common.c                           Utilities (logging, file I/O, PID)
-|   +-- enforcer.c                         Seccomp filter building and enforcement
-|   +-- main.c                             CLI entry point (subcommand dispatch)
-|   +-- profiler.c                         Profile generation and I/O
-|   \-- tracer.c                           Ptrace/eBPF tracer backend
+├── src/
+│   ├── common.c
+│   ├── enforcer.c
+│   ├── main.c
+│   ├── profiler.c
+│   └── tracer.c
 
-+-- tests/
-|   \-- test_profiler.c                    Unit tests for profiler and I/O
+├── tests/
+│   └── test_profiler.c
 
-+-- .clang-format
+├── .clang-format
 
-+-- .gitignore
+├── .gitignore
 
-+-- LICENSE
+├── LICENSE
 
-+-- Makefile
+├── Makefile
 
-\-- README.md
+└── README.md
 ```
 
 ---
