@@ -221,32 +221,36 @@ SYSCAGE is designed for safe profiling and enforcement:
 
 ## Repository Structure
 
-```
-SYSCAGE/
+```text
+├── bin/
+│   └── syscage                            Compiled binary output
+
+├── build/                                 Build artifacts
+
 ├── docs/
 │   ├── ARCHITECTURE.md                    System design and module boundaries
+│   ├── BPF_REFERENCE.md                   Seccomp-BPF filter internals
 │   ├── OPERATION_MODEL.md                 Usage workflow and execution modes
-│   ├── THREAT_MODEL.md                    Security scope and attack scenarios
-│   └── BPF_REFERENCE.md                   Seccomp-BPF filter internals
+│   └── THREAT_MODEL.md                    Security scope and attack scenarios
+
+├── examples/
+│   └── profiles/                          Example seccomp profiles
 
 ├── include/
-│   ├── syscage.h                          Main header and configuration
-│   ├── tracer.h                           Tracer API
+│   ├── enforcer.h                         Enforcer and seccomp API
 │   ├── profiler.h                         Profiler and profile API
-│   └── enforcer.h                         Enforcer and seccomp API
+│   ├── syscage.h                          Main header and configuration
+│   └── tracer.h                           Tracer API
 
 ├── src/
+│   ├── common.c                           Utilities (logging, file I/O, PID)
+│   ├── enforcer.c                         Seccomp filter building and enforcement
 │   ├── main.c                             CLI entry point (subcommand dispatch)
-│   ├── common.c                           Utilities (logging, file I/O, PID resolution)
-│   ├── tracer.c                           Ptrace/eBPF tracer backend
 │   ├── profiler.c                         Profile generation and I/O
-│   └── enforcer.c                         Seccomp filter building and enforcement
+│   └── tracer.c                           Ptrace/eBPF tracer backend
 
 ├── tests/
 │   └── test_profiler.c                    Unit tests for profiler and I/O
-
-├── examples/
-│   └── profiles/                          Example profiles
 
 ├── .clang-format
 
