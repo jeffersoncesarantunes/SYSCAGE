@@ -2,7 +2,7 @@
 
 Behavioral syscall profiler and seccomp policy generator for Linux process confinement.
 
-[![Platform-Linux](https://img.shields.io/badge/Platform-Linux-1793D1?style=flat-square&logo=linux&logoColor=white)](https://kernel.org) [![Language-C11](https://img.shields.io/badge/Language-C11-A8B9CC?style=flat-square&logo=c&logoColor=white)](https://gcc.gnu.org/) [![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square&logo=license&logoColor=white)](LICENSE) [![Status](https://img.shields.io/badge/Status-Active-006400?style=flat-square)](#-roadmap) [![Tested-on](https://img.shields.io/badge/Tested%20on-Arch%20Linux-1793D1?style=flat-square&logo=arch-linux)](https://archlinux.org) [![Domain](https://img.shields.io/badge/Domain-Process%20Confinement-8A2BE2?style=flat-square)](#-threat-model)
+[![Platform-Linux](https://img.shields.io/badge/Platform-Linux-1793D1?style=flat-square&logo=linux&logoColor=white)](https://kernel.org) [![Language-C11](https://img.shields.io/badge/Language-C11-00599C?style=flat-square&logo=c&logoColor=white)](https://gcc.gnu.org/) [![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square&logo=license&logoColor=white)](LICENSE) [![Status](https://img.shields.io/badge/Status-Active-006400?style=flat-square)](#-roadmap) [![Tested-on](https://img.shields.io/badge/Tested%20on-Arch%20Linux-1793D1?style=flat-square&logo=arch-linux)](https://archlinux.org) [![Domain](https://img.shields.io/badge/Domain-Process%20Confinement-8A2BE2?style=flat-square)](#-threat-model)
 
 ---
 
@@ -304,7 +304,7 @@ SYSCAGE is designed for safe profiling and enforcement:
 
 ## License
 
-[![License-MIT](https://img.shields.io/badge/License-MIT-BD93F9?style=flat-square&logo=opensourceinitiative&logoColor=white)](LICENSE)
+[![License-MIT](https://img.shields.io/badge/License-MIT-E63946?style=flat-square&logo=opensourceinitiative&logoColor=white)](LICENSE)
 
 *This project is licensed under the MIT License.*
 
