@@ -188,6 +188,54 @@ int profiler_save_header(const profile_t *pf, const char *path)
     return 0;
 }
 
+int profiler_save_json(const profile_t *pf, const char *path)
+{
+    FILE *f = fopen(path, "w");
+    if (!f) {
+        log_error("Cannot write JSON profile to %s\n", path);
+        return -1;
+    }
+
+    fprintf(f, "{\n");
+    fprintf(f, "  \"tool\": \"syscage\",\n");
+    fprintf(f, "  \"version\": 1,\n");
+    fprintf(f, "  \"metadata\": {\n");
+    fprintf(f, "    \"source_pid\": %d,\n", pf->source_pid);
+    fprintf(f, "    \"source_cmd\": \"%s\",\n", pf->source_cmd);
+    fprintf(f, "    \"duration_sec\": %.1f,\n", pf->duration_sec);
+    fprintf(f, "    \"total_observations\": %lu,\n", pf->total_observations);
+    fprintf(f, "    \"rule_count\": %zu,\n", pf->rule_count);
+    fprintf(f, "    \"default_action\": \"%s\"\n",
+            pf->default_action == ACTION_ALLOW ? "ALLOW" :
+            pf->default_action == ACTION_KILL ? "KILL" :
+            pf->default_action == ACTION_TRAP ? "TRAP" : "KILL_PROCESS");
+    fprintf(f, "  },\n");
+    fprintf(f, "  \"rules\": [\n");
+
+    for (size_t i = 0; i < pf->rule_count; i++) {
+        const char *action_str = "ALLOW";
+        switch (pf->rules[i].action) {
+        case ACTION_ALLOW: action_str = "ALLOW"; break;
+        case ACTION_KILL:  action_str = "KILL"; break;
+        case ACTION_TRAP:  action_str = "TRAP"; break;
+        default: break;
+        }
+        fprintf(f, "    {\"nr\": %ld, \"action\": \"%s\", \"name\": \"%s\"}%s\n",
+                pf->rules[i].syscall_number,
+                action_str,
+                pf->rules[i].name ?
+                    pf->rules[i].name :
+                    tracer_syscall_name(pf->rules[i].syscall_number),
+                (i < pf->rule_count - 1) ? "," : "");
+    }
+
+    fprintf(f, "  ]\n");
+    fprintf(f, "}\n");
+
+    fclose(f);
+    return 0;
+}
+
 profile_t *profiler_load(const char *path)
 {
     char *data = NULL;

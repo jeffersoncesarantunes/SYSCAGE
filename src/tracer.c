@@ -721,6 +721,55 @@ trace_result_t *tracer_load(const char *path)
     return tr;
 }
 
+trace_result_t *tracer_merge(trace_result_t **traces, size_t count)
+{
+    if (!traces || count == 0) return NULL;
+
+    syscall_entry_t entries[SYSCAGE_MAX_SYSCALL] = {{0}};
+    unsigned long total = 0;
+
+    for (size_t t = 0; t < count; t++) {
+        for (size_t i = 0; i < traces[t]->count; i++) {
+            long nr = traces[t]->calls[i].number;
+            if (nr >= 0 && nr < (long)SYSCAGE_MAX_SYSCALL) {
+                entries[nr].number = nr;
+                entries[nr].count += traces[t]->calls[i].count;
+            }
+            total += traces[t]->calls[i].count;
+        }
+    }
+
+    size_t n = 0;
+    for (int i = 0; i < SYSCAGE_MAX_SYSCALL; i++) {
+        if (entries[i].count > 0) n++;
+    }
+
+    trace_result_t *tr = calloc(1, sizeof(trace_result_t));
+    if (!tr) return NULL;
+
+    tr->calls = calloc(n, sizeof(syscall_obs_t));
+    if (!tr->calls) {
+        free(tr);
+        return NULL;
+    }
+
+    size_t idx = 0;
+    for (int i = 0; i < SYSCAGE_MAX_SYSCALL; i++) {
+        if (entries[i].count > 0) {
+            tr->calls[idx].number = entries[i].number;
+            tr->calls[idx].count = entries[i].count;
+            idx++;
+        }
+    }
+
+    tr->count = n;
+    tr->total = total;
+    tr->target_pid = 0;
+    tr->duration_sec = 0.0;
+
+    return tr;
+}
+
 void tracer_free(trace_result_t *tr)
 {
     if (tr) {

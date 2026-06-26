@@ -162,19 +162,23 @@ static int cmd_gen(int argc, char **argv, const char *prog)
     struct option long_opts[] = {
         {"output",    required_argument, 0, 'o'},
         {"header",    no_argument,       0, 'H'},
+        {"json",      no_argument,       0, 'j'},
         {"frequency", required_argument, 0, 'f'},
         {"quiet",     no_argument,       0, 'q'},
         {"help",      no_argument,       0, 'h'},
         {0, 0, 0, 0}
     };
 
-    while ((opt = getopt_long(argc, argv, "o:Hf:qh", long_opts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "o:Hjf:qh", long_opts, NULL)) != -1) {
         switch (opt) {
         case 'o':
             opts.output = optarg;
             break;
         case 'H':
             opts.generate_header = 1;
+            break;
+        case 'j':
+            opts.generate_json = 1;
             break;
         case 'f': {
             char *end;
@@ -189,20 +193,23 @@ static int cmd_gen(int argc, char **argv, const char *prog)
         case 'h':
             print_banner();
             fprintf(stdout,
-                "Usage: %s gen [options] <trace-file>\n"
+                "Usage: %s gen [options] <trace-file...>\n"
                 "\n"
                 "Generate a seccomp profile from trace data.\n"
+                "Multiple trace files are merged before profile generation.\n"
                 "\n"
                 "Options:\n"
                 "  -o, --output FILE    Save profile to FILE (default: <trace>.syscage)\n"
                 "  -H, --header         Also emit a C header file\n"
+                "  -j, --json           Also emit a JSON profile\n"
                 "  -f, --frequency N    Minimum syscall frequency to include (default: 1)\n"
                 "  -q, --quiet          Suppress non-essential output\n"
                 "  -h, --help           Show this help\n"
                 "\n"
                 "Examples:\n"
                 "  syscage gen -o nginx.syscage nginx.trace\n"
-                "  syscage gen --header nginx.trace\n",
+                "  syscage gen --header nginx.trace\n"
+                "  syscage gen --json trace1.trace trace2.trace -o combined.syscage\n",
                 prog);
             return 0;
         default:
@@ -217,12 +224,41 @@ static int cmd_gen(int argc, char **argv, const char *prog)
 
     print_banner();
 
-    const char *trace_path = argv[optind];
+    size_t trace_count = (size_t)(argc - optind);
+    trace_result_t *tr = NULL;
 
-    trace_result_t *tr = tracer_load(trace_path);
-    if (!tr) {
-        log_error("Failed to load trace from %s\n", trace_path);
-        return SYSCAGE_ERR;
+    if (trace_count == 1) {
+        tr = tracer_load(argv[optind]);
+        if (!tr) {
+            log_error("Failed to load trace from %s\n", argv[optind]);
+            return SYSCAGE_ERR;
+        }
+    } else {
+        trace_result_t **traces = calloc(trace_count, sizeof(trace_result_t *));
+        if (!traces) return SYSCAGE_ERR;
+
+        size_t loaded = 0;
+        for (size_t i = 0; i < trace_count; i++) {
+            traces[loaded] = tracer_load(argv[optind + i]);
+            if (!traces[loaded]) {
+                log_error("Failed to load trace from %s\n", argv[optind + i]);
+                while (loaded > 0) tracer_free(traces[--loaded]);
+                free(traces);
+                return SYSCAGE_ERR;
+            }
+            loaded++;
+        }
+
+        tr = tracer_merge(traces, loaded);
+        for (size_t j = 0; j < loaded; j++) tracer_free(traces[j]);
+        free(traces);
+
+        if (!tr) {
+            log_error("Failed to merge traces.\n");
+            return SYSCAGE_ERR;
+        }
+
+        log_info("Merged %zu trace files.\n", trace_count);
     }
 
     profile_t *pf = profiler_generate(tr, &opts);
@@ -236,7 +272,7 @@ static int cmd_gen(int argc, char **argv, const char *prog)
     if (opts.output) {
         snprintf(out_path, sizeof(out_path), "%s", opts.output);
     } else {
-        snprintf(out_path, sizeof(out_path), "%s%s", trace_path,
+        snprintf(out_path, sizeof(out_path), "%s%s", argv[optind],
                  SYSCAGE_PROFILE_EXT);
     }
 
@@ -254,6 +290,14 @@ static int cmd_gen(int argc, char **argv, const char *prog)
         snprintf(header_path, sizeof(header_path), "%s.h", out_path);
         if (profiler_save_header(pf, header_path) == 0) {
             log_info("Header saved to %s\n", header_path);
+        }
+    }
+
+    if (opts.generate_json) {
+        char json_path[1032];
+        snprintf(json_path, sizeof(json_path), "%s.json", out_path);
+        if (profiler_save_json(pf, json_path) == 0) {
+            log_info("JSON profile saved to %s\n", json_path);
         }
     }
 

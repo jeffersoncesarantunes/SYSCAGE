@@ -44,6 +44,7 @@ trace_result_t *tracer_exec(const char *cmd, char *const argv[],
                             const tracer_opts_t *opts);
 int tracer_save(const trace_result_t *tr, const char *path);
 trace_result_t *tracer_load(const char *path);
+trace_result_t *tracer_merge(trace_result_t **traces, size_t count);
 void tracer_free(trace_result_t *tr);
 const char *tracer_syscall_name(long number);
 

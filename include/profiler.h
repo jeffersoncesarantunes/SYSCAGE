@@ -34,6 +34,7 @@ typedef struct {
     int include_critical;
     int min_frequency;
     int generate_header;
+    int generate_json;
     const char *output;
 } profile_opts_t;
 
@@ -42,6 +43,7 @@ typedef struct {
     .include_critical = 1,      \
     .min_frequency = 1,         \
     .generate_header = 0,       \
+    .generate_json = 0,         \
     .output = NULL              \
 }
 
@@ -49,6 +51,7 @@ profile_t *profiler_generate(const trace_result_t *tr,
                              const profile_opts_t *opts);
 int profiler_save(const profile_t *pf, const char *path);
 int profiler_save_header(const profile_t *pf, const char *path);
+int profiler_save_json(const profile_t *pf, const char *path);
 profile_t *profiler_load(const char *path);
 void profiler_free(profile_t *pf);
 void profiler_print(const profile_t *pf);
