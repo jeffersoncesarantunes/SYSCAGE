@@ -280,7 +280,6 @@ SYSCAGE is designed for safe profiling and enforcement:
 
 ## Roadmap
 
-### Done
 - [x] Ptrace-based syscall tracer (no deps)
 - [x] Trace file I/O (save/load .trace)
 - [x] Profile generation from trace data
@@ -291,8 +290,6 @@ SYSCAGE is designed for safe profiling and enforcement:
 - [x] Watch mode with violation monitoring
 - [x] Profile merging (combine multiple traces)
 - [x] JSON profile export
-
-### Next
 - [ ] Running process attach (ptrace seccomp injection)
 - [ ] Systemd integration (generator mode)
 - [ ] eBPF backend (libbpf)
