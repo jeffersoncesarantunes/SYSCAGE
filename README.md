@@ -33,7 +33,7 @@ SYSCAGE is a three-phase tool that observes, generates, and enforces syscall-lev
 - **Ptrace-based tracing (zero deps)** — works on any Linux system without external libraries
 - **eBPF tracing (optional)** — lower overhead when libbpf is available (`--ebpf`)
 - **Critical syscall injection** — automatically includes essential syscalls (read, write, exit, etc.)
-- **Multiple enforcement modes** — attach to running process, spawn new process, or watch with violation monitoring
+- **Multiple enforcement modes** — attach to running process (ptrace injection), spawn new process, or watch with violation monitoring
 - **JSON export** — machine-readable profile output for toolchain integration (`--json`)
 - **Trace merging** — combine multiple trace files before profile generation
 - **C header export** — generate embeddable seccomp filter code (`--header`)
@@ -290,7 +290,7 @@ SYSCAGE is designed for safe profiling and enforcement:
 - [x] Watch mode with violation monitoring
 - [x] Profile merging (combine multiple traces)
 - [x] JSON profile export
-- [ ] Running process attach (ptrace seccomp injection)
+- [x] Running process attach (ptrace seccomp injection)
 - [ ] Systemd integration (generator mode)
 - [ ] eBPF backend (libbpf)
 - [ ] Container-aware profiling (Docker/k8s)
