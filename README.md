@@ -292,8 +292,8 @@ SYSCAGE is designed for safe profiling and enforcement:
 - [x] JSON profile export
 - [x] Running process attach (ptrace seccomp injection)
 - [ ] Systemd integration (generator mode)
-- [ ] eBPF backend (libbpf)
 - [ ] Container-aware profiling (Docker/k8s)
+- [ ] eBPF backend (libbpf)
 - [ ] Remote profiling over SSH
 
 ---
