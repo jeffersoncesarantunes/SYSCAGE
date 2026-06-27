@@ -1,0 +1,21 @@
+name: SYSCAGE CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build
+        run: make clean && make
+      - name: Run tests
+        run: make test
+      - name: Verify binary
+        run: ./bin/syscage --help
+      - name: Check for banned functions
+        run: '! grep -rn "\<gets(" src/ include/ || exit 1'
