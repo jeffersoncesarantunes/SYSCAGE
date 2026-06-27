@@ -7,6 +7,8 @@ SRCDIR  = src
 INCDIR  = include
 BUILDDIR = build
 BINDIR  = bin
+PREFIX  ?= /usr/local
+MANDIR  ?= $(PREFIX)/share/man/man1
 
 SRCS    = $(wildcard $(SRCDIR)/*.c)
 OBJS    = $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.o,$(SRCS))
@@ -47,8 +49,15 @@ $(BUILDDIR)/test_%: $(TESTDIR)/test_%.c $(TEST_OBJS) | $(BUILDDIR)
 clean:
 	rm -rf $(BUILDDIR) $(BINDIR) *.trace *.syscage
 
-install: $(TARGET)
-	install -m 755 $(TARGET) /usr/local/bin/syscage
+install: $(TARGET) install-man
+	install -m 755 -d $(DESTDIR)$(PREFIX)/bin
+	install -m 755 $(TARGET) $(DESTDIR)$(PREFIX)/bin/syscage
+
+install-man:
+	install -m 755 -d $(DESTDIR)$(MANDIR)
+	install -m 644 man/syscage.1 $(DESTDIR)$(MANDIR)/syscage.1
 
 uninstall:
-	rm -f /usr/local/bin/syscage
+	rm -f $(DESTDIR)$(PREFIX)/bin/syscage
+	rm -f $(DESTDIR)$(MANDIR)/syscage.1
+	@-rmdir $(DESTDIR)$(MANDIR) 2>/dev/null; true

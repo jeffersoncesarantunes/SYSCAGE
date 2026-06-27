@@ -1,0 +1,65 @@
+.TH SYSCAGE 1 "2026-06-27" "SYSCAGE" "User Commands"
+.SH NAME
+syscage \- Behavioral syscall profiler and seccomp policy generator
+.SH SYNOPSIS
+.B syscage
+.B learn
+[\fI--duration\fR \fIseconds\fR] \fIcommand\fR...
+.br
+.B syscage
+.B gen
+\fIprofile\fR \fI--name\fR \fIname\fR
+.br
+.B syscage
+.B enforce
+\fIprofile\fR \fI--pid\fR \fIpid\fR
+.br
+.B syscage
+.B exec
+\fIprofile\fR \fIcommand\fR...
+.br
+.B syscage
+.B watch
+\fIprofile\fR \fIcommand\fR...
+.SH DESCRIPTION
+SYSCAGE is a three-phase tool for seccomp-BPF policy management:
+.IP 1. 4
+\fBlearn\fR: trace syscalls made by a process via ptrace
+.IP 2. 4
+\fBgen\fR: generate a seccomp profile from the trace data
+.IP 3. 4
+\fBenforce\fR: inject the seccomp filter into a running process
+via ptrace
+.SH COMMANDS
+.TP
+.B learn \fI--duration\fR \fIseconds\fR \fIcommand\fR...
+Trace all syscalls made by the given command for the specified
+duration and save the trace to a file.
+.TP
+.B gen \fIprofile\fR \fI--name\fR \fIname\fR
+Generate a seccomp-BPF profile from a saved trace file.
+Outputs a C header file for static compilation or a JSON
+profile for runtime enforcement.
+.TP
+.B enforce \fIprofile\fR \fI--pid\fR \fIpid\fR
+Inject a seccomp filter into a running process by PID using
+ptrace. Requires root.
+.TP
+.B exec \fIprofile\fR \fIcommand\fR...
+Spawn a new process with the seccomp filter applied before
+execution.
+.TP
+.B watch \fIprofile\fR \fIcommand\fR...
+Spawn and monitor a process under the seccomp filter, reporting
+any SIGSYS seccomp violations.
+.SH EXIT STATUS
+.B 0
+on success, 1 on error.
+.SH AUTHOR
+Jefferson Cesar Antunes
+.SH SEE ALSO
+.BR seccomp (2),
+.BR ptrace (2),
+.BR prctl (2),
+.BR kscanner (1),
+.BR linspec (1)
