@@ -1,7 +1,7 @@
-FROM alpine:3.20 AS builder
+FROM alpine:3.24 AS builder
 RUN apk add --no-cache gcc musl-dev make linux-headers
 WORKDIR /src
-COPY Makefile src/ include/ tests/ ./
+COPY . ./
 RUN make clean && make
 
 FROM scratch
