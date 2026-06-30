@@ -302,12 +302,5 @@ SYSCAGE is designed for safe profiling and enforcement:
 
 [![Docs-Architecture](https://img.shields.io/badge/Architecture-Design-00599C?style=flat-square&logo=linux&logoColor=white)](docs/ARCHITECTURE.md) [![Docs-Operation](https://img.shields.io/badge/Operation-Model-006400?style=flat-square&logo=gnu-bash&logoColor=white)](docs/OPERATION_MODEL.md) [![Docs-ThreatModel](https://img.shields.io/badge/Threat-Model-CC0000?style=flat-square&logo=target&logoColor=white)](docs/THREAT_MODEL.md) [![Docs-BPF](https://img.shields.io/badge/BPF-Reference-444444?style=flat-square&logo=linux&logoColor=white)](docs/BPF_REFERENCE.md)
 
----
-
-## License
-
-[![License-MIT](https://img.shields.io/badge/License-MIT-E63946?style=flat-square&logo=opensourceinitiative&logoColor=white)](LICENSE)
-
-*This project is licensed under the MIT License.*
 
 
