@@ -226,42 +226,31 @@ SYSCAGE is designed for safe profiling and enforcement:
 ```text
 ├── bin/
 │   └── syscage
-
 ├── build/
-
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── BPF_REFERENCE.md
 │   ├── OPERATION_MODEL.md
 │   └── THREAT_MODEL.md
-
 ├── examples/
 │   └── profiles/
-
 ├── include/
 │   ├── enforcer.h
 │   ├── profiler.h
 │   ├── syscage.h
 │   └── tracer.h
-
 ├── src/
 │   ├── common.c
 │   ├── enforcer.c
 │   ├── main.c
 │   ├── profiler.c
 │   └── tracer.c
-
 ├── tests/
 │   └── test_profiler.c
-
 ├── .clang-format
-
 ├── .gitignore
-
 ├── LICENSE
-
 ├── Makefile
-
 └── README.md
 ```
 
