@@ -27,6 +27,7 @@ all: $(TARGET)
 $(TARGET): $(OBJS) | $(BINDIR)
 	$(CC) $(CFLAGS) -I$(INCDIR) -o $@ $^ $(LDFLAGS) $(LIBS)
 	@strip $@
+	@echo "✅ Build successful."
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c | $(BUILDDIR)
 	$(CC) $(CFLAGS) -I$(INCDIR) -c -o $@ $<
@@ -47,6 +48,7 @@ $(BUILDDIR)/test_%: $(TESTDIR)/test_%.c $(TEST_OBJS) | $(BUILDDIR)
 	$(CC) $(CFLAGS) -I$(INCDIR) -o $@ $< $(TEST_OBJS) $(LDFLAGS) $(LIBS)
 
 clean:
+	@echo "🧹 Clean."
 	rm -rf $(BUILDDIR) $(BINDIR) *.trace *.syscage
 
 install: $(TARGET) install-man
