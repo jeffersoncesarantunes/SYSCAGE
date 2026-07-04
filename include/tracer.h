@@ -19,8 +19,7 @@ typedef struct {
 } trace_result_t;
 
 typedef enum {
-    TRACER_PTRACE = 0,
-    TRACER_EBPF
+    TRACER_PTRACE = 0
 } tracer_backend_t;
 
 typedef struct {

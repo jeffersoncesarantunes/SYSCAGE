@@ -81,8 +81,8 @@ static int cmd_learn(int argc, char **argv, const char *prog)
             opts.trace_children = 1;
             break;
         case 'e':
-            opts.backend = TRACER_EBPF;
-            break;
+            fprintf(stderr, "Error: eBPF backend not yet implemented, use ptrace backend\n");
+            return 1;
         case 'q':
             g_config.quiet = 1;
             break;

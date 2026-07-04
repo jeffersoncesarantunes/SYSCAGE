@@ -362,13 +362,11 @@ static const char *g_syscall_names[SYSCAGE_MAX_SYSCALL] = {
 
 const char *tracer_syscall_name(long number)
 {
-    static char buf[32];
     if (number >= 0 && number < SYSCAGE_MAX_SYSCALL
         && g_syscall_names[number]) {
         return g_syscall_names[number];
     }
-    snprintf(buf, sizeof(buf), "syscall_%ld", number);
-    return buf;
+    return "unknown";
 }
 
 typedef struct {
@@ -476,12 +474,18 @@ static int ptrace_trace_pid(struct trace_context *ctx, int duration_sec)
             break;
         }
 
+#if defined(__x86_64__)
         struct user_regs_struct regs;
         if (ptrace(PTRACE_GETREGS, traced_pid, NULL, &regs) < 0) {
             break;
         }
 
         long nr = (long)regs.orig_rax;
+#else
+        long nr = 0;
+        (void)traced_pid;
+        break;
+#endif
         trace_entry_record(ctx, nr);
 
         if (ptrace(PTRACE_SYSCALL, traced_pid, NULL, NULL) < 0) break;

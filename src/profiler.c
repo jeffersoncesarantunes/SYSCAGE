@@ -299,7 +299,7 @@ profile_t *profiler_load(const char *path)
         }
 
         long nr;
-        char action;
+        char action = 0;
         if (sscanf(line, "%ld %c", &nr, &action) >= 1) {
             if (idx >= capacity) {
                 capacity *= 2;

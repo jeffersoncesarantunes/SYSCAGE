@@ -141,6 +141,7 @@ static long ptrace_inject_syscall(pid_t pid, long number,
                                    long arg1, long arg2, long arg3,
                                    long arg4, long arg5)
 {
+#if defined(__x86_64__)
     struct user_regs_struct regs;
     if (ptrace(PTRACE_GETREGS, pid, NULL, &regs) < 0) return -1;
 
@@ -205,6 +206,11 @@ static long ptrace_inject_syscall(pid_t pid, long number,
     ptrace(PTRACE_SETREGS, pid, NULL, &regs);
 
     return result;
+#else
+    (void)pid; (void)number; (void)arg1; (void)arg2;
+    (void)arg3; (void)arg4; (void)arg5;
+    return -1;
+#endif
 }
 
 int enforcer_apply_filter(profile_t *pf)
