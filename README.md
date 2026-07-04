@@ -137,6 +137,9 @@ git clone https://github.com/jeffersoncesarantunes/SYSCAGE.git
 cd SYSCAGE
 
 # 2. Compile
+make
+
+# (Optional) Clean rebuild from scratch
 make clean && make
 ```
 
