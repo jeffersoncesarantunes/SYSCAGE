@@ -129,21 +129,28 @@ prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog)  // apply filter
 
 ---
 
-## Build and Run
+## Quick Start
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/jeffersoncesarantunes/SYSCAGE.git
-cd SYSCAGE
-
-# 2. Compile
-make
-
-# (Optional) Clean rebuild from scratch
-make clean && make
+cd SYSCAGE && make
+sudo ./bin/syscage learn -d 5 -o ls.trace -- /bin/ls -la /tmp
+sudo ./bin/syscage gen ls.trace
+sudo ./bin/syscage watch -p ls.trace.syscage -- /bin/ls /tmp
 ```
 
-### 3. Profile a process (learn phase)
+Three commands and you've confined `ls` to only the syscalls it used during profiling. If it runs the same as without SYSCAGE, the profile is complete.
+
+## Build
+
+```bash
+make                # Compile
+make clean && make  # Clean rebuild from scratch
+```
+
+## Usage
+
+### Learn — Profile a process
 
 Trace every syscall a process makes. The **recommended way** (works on any Linux) is to **launch a command** under trace. You can also attach to a running process if your kernel allows it.
 
@@ -163,9 +170,9 @@ sudo ./bin/syscage learn -d 15 -o nginx.trace $(pidof nginx)
 > - `1234` — PID of a running process to trace
 > - `$(pidof nginx)` — resolves "nginx" to its PID automatically
 >
-> **Note:** Attaching to a running process requires `ptrace_scope = 0`. Most Linux distros (including Arch) default to `1`, which only allows tracing child processes. This is why Option A/B may fail with "Operation not permitted" — launch the command under trace instead (Option C, which always works).
+> **Note:** Attaching to a running process requires `ptrace_scope = 0`. Most Linux distros (including Arch) default to `1`, which only allows tracing child processes. This is why attaching by PID may fail with "Operation not permitted" — launch the command under trace instead, which always works.
 
-### 4. Generate a seccomp profile (gen phase)
+### Gen — Generate a seccomp profile
 
 Convert the raw trace into a human-readable policy file:
 
@@ -181,7 +188,7 @@ You can also generate a C header for embedding into other programs:
 sudo ./bin/syscage gen --header ls.trace
 ```
 
-### 5. Enforce the profile (enforce / watch phase)
+### Enforce / Watch — Apply the profile
 
 Apply the policy to a process. Use `enforce` to spawn a command silently, or `watch` to see its output and exit status:
 
@@ -198,16 +205,6 @@ sudo ./bin/syscage enforce -p ls.trace.syscage -e -- /bin/ls /tmp
 > - `-e` — spawn a new process (instead of attaching to a running one)
 > - `-- /bin/ls /tmp` — command to confine under the profile
 > - `watch` — same as enforce, but **shows output** and logs if a blocked syscall is attempted
-
-### Complete working example: `ls`
-
-```bash
-sudo ./bin/syscage learn -d 5 -o ls.trace -- /bin/ls -la /tmp
-sudo ./bin/syscage gen ls.trace
-sudo ./bin/syscage watch -p ls.trace.syscage -- /bin/ls /tmp
-```
-
-That's it. Three commands and you've confined `ls` to only the syscalls it used during profiling. If it runs the same as without SYSCAGE, the profile is complete.
 
 ---
 
