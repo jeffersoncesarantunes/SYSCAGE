@@ -74,6 +74,13 @@ static struct sock_fprog *build_seccomp_filter(profile_t *pf)
         return NULL;
     }
 
+    if (idx > 4096) {
+        log_error("BPF filter too large: %zu instructions (kernel limit: 4096)\n", idx);
+        free(filter);
+        free(prog);
+        return NULL;
+    }
+
     prog->len = (unsigned short)idx;
     prog->filter = filter;
 
