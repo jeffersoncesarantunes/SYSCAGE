@@ -360,13 +360,16 @@ static const char *g_syscall_names[SYSCAGE_MAX_SYSCALL] = {
     [450] = "set_mempolicy_home_node",
 };
 
+static char g_unknown_name[32];
+
 const char *tracer_syscall_name(long number)
 {
     if (number >= 0 && number < SYSCAGE_MAX_SYSCALL
         && g_syscall_names[number]) {
         return g_syscall_names[number];
     }
-    return "unknown";
+    snprintf(g_unknown_name, sizeof(g_unknown_name), "syscall_%ld", number);
+    return g_unknown_name;
 }
 
 typedef struct {
